@@ -7,6 +7,9 @@ import Layout from "./Layout";
 import Cube from "./components/Cube";
 import Ball from "./components/Ball";
 
+import HangingThing from "./components/HangingThing";
+import { Rope } from "./components/Rope";
+
 function App() {
   return (
     <Styled>
@@ -30,10 +33,17 @@ function App() {
             <Layout />
 
             {/* 🧊 cube */}
-            <Cube position-y={1} />
+            {/* <Cube position-y={1} /> */}
 
             {/* 🏀 ball */}
             <Ball />
+
+            <Rope
+              length={10}
+              position={[0, 0.5, 0]}
+              // rotation-z={-Math.PI / 2}
+            />
+            <HangingThing l={4} position={[2, 5, 0]} />
 
             {/* Ground */}
             <RigidBody
