@@ -39,11 +39,11 @@ function App() {
             <Ball />
 
             <Rope
-              length={10}
-              position={[0, 0.5, 0]}
+              length={5}
+              position={[1, 0.5, 0]}
               // rotation-z={-Math.PI / 2}
             />
-            <HangingThing l={4} position={[2, 5, 0]} />
+            <HangingThing l={4} position={[4, 5, 1]} />
 
             {/* Ground */}
             <RigidBody

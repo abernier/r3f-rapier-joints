@@ -12,9 +12,7 @@ interface HangingThingProps extends GroupProps {
   l?: number;
 }
 
-const HangingThing = ({ l, ...props }: HangingThingProps) => {
-  l ??= 4;
-
+const HangingThing = ({ l = 4, ...props }: HangingThingProps) => {
   /**
    * Joints can be created between two RigidBodies
    */

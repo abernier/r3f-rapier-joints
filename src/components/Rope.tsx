@@ -49,14 +49,17 @@ interface RopeJointProps extends GroupProps {
   length: number;
 }
 
+const radius = 0.25;
+const offset = 0.5;
+
 /**
  * We can wrap our hook in a component in order to initiate
  * them conditionally and dynamically
  */
 const RopeJoint = ({ a, b }: { a: RigidBodyApiRef; b: RigidBodyApiRef }) => {
   useSphericalJoint(a, b, [
-    [-0.5, 0, 0],
-    [0.5, 0, 0],
+    [-(radius + offset), 0, 0],
+    [radius + offset, 0, 0],
   ]);
   return null;
 };
@@ -107,10 +110,10 @@ export const Rope = (props: RopeJointProps) => {
         <RopeSegment
           ref={ref}
           key={i}
-          position={[i * 1, 0, 0]}
+          position={[i * 2 * (radius + offset), 0, 0]}
           type={i === 0 ? "kinematicPosition" : "dynamic"}
         >
-          <Sphere args={[0.5]}>
+          <Sphere args={[radius]}>
             <meshStandardMaterial wireframe />
           </Sphere>
         </RopeSegment>
