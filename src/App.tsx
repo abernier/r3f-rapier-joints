@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 import styled from "@emotion/styled";
 import { Canvas } from "@react-three/fiber";
 import { KeyboardControls } from "@react-three/drei";
@@ -9,6 +11,7 @@ import Ball from "./components/Ball";
 
 import HangingThing from "./components/HangingThing";
 import { Rope } from "./components/Rope";
+import { Vector3 } from "three";
 
 function App() {
   return (
@@ -33,7 +36,7 @@ function App() {
             <Layout />
 
             {/* 🧊 cube */}
-            {/* <Cube position-y={1} /> */}
+            <Cube position-y={1} />
 
             {/* 🏀 ball */}
             <Ball />
@@ -43,7 +46,7 @@ function App() {
               position={[1, 0.5, 0]}
               // rotation-z={-Math.PI / 2}
             />
-            <HangingThing l={4} position={[4, 5, 1]} />
+            {/* <HangingThing l={4} position={[4, 5, 1]} /> */}
 
             {/* Ground */}
             <RigidBody

@@ -46,12 +46,7 @@ function Layout({ children, bg }: LayoutProps) {
         ref={cameraRef}
         position={gui.position}
       />
-      <OrbitControls
-        camera={cameraRef.current}
-        onChange={(e) => {
-          setGui({ position: cameraRef.current?.position.toArray() }); // https://github.com/pmndrs/leva/blob/main/docs/advanced/controlled-inputs.md#set-and-onchange
-        }}
-      />
+      <OrbitControls makeDefault />
 
       <Environment background>
         <mesh scale={100}>

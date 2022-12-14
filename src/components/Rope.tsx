@@ -86,7 +86,7 @@ export const Rope = (props: RopeJointProps) => {
       const pos = body?.translation().clone() || new Vector3();
 
       const res = ref.current.worldToLocal(pos);
-      console.log("res", res);
+      // console.log("res", res);
 
       return res;
     });
