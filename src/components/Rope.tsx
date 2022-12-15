@@ -1,56 +1,33 @@
 import { useFrame } from "@react-three/fiber";
-import { Sphere, CatmullRomLine, QuadraticBezierLine } from "@react-three/drei";
+import { Sphere, CatmullRomLine, PivotControls } from "@react-three/drei";
 import {
-  Vector3Array,
-  RigidBodyTypeString,
   RigidBodyApi,
   RigidBody,
   RigidBodyApiRef,
   useSphericalJoint,
 } from "@react-three/rapier";
-import {
-  forwardRef,
-  ReactNode,
-  useRef,
-  useImperativeHandle,
-  createRef,
-  useState,
-} from "react";
-import { Quaternion, Vector3 } from "three";
+import { forwardRef, ReactNode, useRef, createRef, useState } from "react";
+import { Vector3 } from "three";
+
+import usePivot from "./usePivot";
 
 import type { GroupProps } from "@react-three/fiber";
 import type { LineProps } from "@react-three/drei";
+import type { RigidBodyProps } from "@react-three/rapier";
 
-const RopeSegment = forwardRef(
-  (
-    {
-      position,
-      children,
-      type,
-    }: {
-      position: Vector3Array;
-      children: ReactNode;
-      type: RigidBodyTypeString;
-    },
-    ref
-  ) => {
-    const rb = useRef<RigidBodyApi>(null);
-    useImperativeHandle(ref, () => rb.current);
+type RopeSegmentProps = RigidBodyProps & {
+  children: ReactNode;
+};
 
+const RopeSegment = forwardRef<RigidBodyApi, RopeSegmentProps>(
+  ({ children, ...rest }, ref) => {
     return (
-      <RigidBody colliders="ball" ref={rb} type={type} position={position}>
+      <RigidBody ref={ref} {...rest}>
         {children}
       </RigidBody>
     );
   }
 );
-
-interface RopeJointProps extends GroupProps {
-  length: number;
-}
-
-const radius = 0.25;
-const offset = 0.5;
 
 /**
  * We can wrap our hook in a component in order to initiate
@@ -64,8 +41,15 @@ const RopeJoint = ({ a, b }: { a: RigidBodyApiRef; b: RigidBodyApiRef }) => {
   return null;
 };
 
-export const Rope = (props: RopeJointProps) => {
-  const ref = useRef<THREE.Group>(null);
+interface RopeProps extends GroupProps {
+  length: number;
+}
+
+const radius = 0.25;
+const offset = 0.5;
+
+export const Rope = (props: RopeProps) => {
+  const groupRef = useRef<THREE.Group>(null);
 
   const [points, setPoints] = useState<LineProps["points"]>([
     [0, 0, 0],
@@ -76,42 +60,35 @@ export const Rope = (props: RopeJointProps) => {
     Array.from({ length: props.length }).map(() => createRef<RigidBodyApi>())
   );
 
-  useFrame(() => {
-    // const now = performance.now();
-    // refs.current[0].current!.setNextKinematicRotation(
-    //   new Quaternion(0, Math.sin(now / 2000) * 6, 0)
-    // );
+  const pivotControlsRef = useRef<THREE.Group>(null);
+  usePivot(refs.current[0], pivotControlsRef);
 
-    const ret = refs.current.map(({ current: body }) => {
+  useFrame(() => {
+    //
+    // setPoints for CatmullRomLine
+    //
+
+    if (!groupRef.current) return;
+
+    const points = refs.current.map(({ current: body }) => {
       const pos = body?.translation().clone() || new Vector3();
 
-      const res = ref.current.worldToLocal(pos);
-      // console.log("res", res);
-
-      return res;
+      return groupRef.current!.worldToLocal(pos);
     });
 
-    setPoints(ret);
+    setPoints(points);
   });
 
   return (
-    <group ref={ref} {...props}>
-      <CatmullRomLine
-        points={points} // Array of Points
-        // closed={false} // Default
-        // curveType="catmullrom" // One of "centripetal" (default), "chordal", or "catmullrom"
-        // tension={0.5} // Default (only applies to "catmullrom" curveType)
-        color="red"
-        lineWidth={3} // In pixels (default)
-        segments={64}
-      />
-
+    <group ref={groupRef} {...props}>
       {refs.current.map((ref, i) => (
         <RopeSegment
           ref={ref}
           key={i}
           position={[i * 2 * (radius + offset), 0, 0]}
-          type={i === 0 ? "kinematicPosition" : "dynamic"}
+          // type={i === 0 ? "kinematicPosition" : "dynamic"}
+          type="dynamic"
+          colliders="ball"
         >
           <Sphere args={[radius]}>
             <meshStandardMaterial wireframe />
@@ -128,6 +105,15 @@ export const Rope = (props: RopeJointProps) => {
             <RopeJoint a={refs.current[i]} b={refs.current[i - 1]} key={i} />
           )
       )}
+
+      <CatmullRomLine
+        points={points} // Array of Points
+        color="red"
+        lineWidth={3} // In pixels (default)
+        segments={64}
+      />
+
+      <PivotControls ref={pivotControlsRef} scale={2} />
     </group>
   );
 };
