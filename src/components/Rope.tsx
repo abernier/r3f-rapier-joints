@@ -90,8 +90,8 @@ export const Rope = (props: RopeProps) => {
           type="dynamic"
           colliders="ball"
         >
-          <Sphere args={[radius]}>
-            <meshStandardMaterial wireframe />
+          <Sphere args={[radius]} castShadow>
+            <meshStandardMaterial />
           </Sphere>
         </RopeSegment>
       ))}
@@ -108,7 +108,7 @@ export const Rope = (props: RopeProps) => {
 
       <CatmullRomLine
         points={points} // Array of Points
-        color="red"
+        color="#ec36a0"
         lineWidth={3} // In pixels (default)
         segments={64}
       />
