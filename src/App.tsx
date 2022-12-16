@@ -14,7 +14,7 @@ import { Rope } from "./components/Rope";
 
 import usePivot from "./components/usePivot";
 
-import type { RigidBodyApi } from "@react-three/rapier/dist/declarations/src/types";
+import type { RigidBodyApi } from "@react-three/rapier";
 
 const map = [
   { name: "forward", keys: ["KeyW"] },
